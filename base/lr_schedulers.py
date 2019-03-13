@@ -5,7 +5,7 @@ import torch
 from torch.optim.lr_scheduler import *
 
 
-#Lots of these are from https://github.com/lyakaap/pytorch-template
+# Lots of these are from https://github.com/lyakaap/pytorch-template
 class WarmupMultiStepLR(torch.optim.lr_scheduler._LRScheduler):
     """multi-step learning rate scheduler with warmup."""
 
@@ -163,6 +163,5 @@ class PolyLR(torch.optim.lr_scheduler._LRScheduler):
         for base_lr in self.base_lrs:
             lr = base_lr * (1.0 - (self.last_epoch / self.max_epoch)) ** self.power
             lrs.append(lr)
-
 
         return lrs

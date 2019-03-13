@@ -4,21 +4,22 @@ from torch.utils.data.dataloader import default_collate
 from torch.utils.data.sampler import SubsetRandomSampler
 
 
-
 # Add this to initialize workers of dataloader to avoid fixed numpy random
 # seeds for each training epoch. For a clearer explanation please refer to:
 # https://github.com/pytorch/pytorch/issues/5059
 def worker_init_fn(worker_id):
     np.random.seed(np.random.get_state()[1][0] + worker_id)
 
+
 class BaseDataLoader(DataLoader):
     """
     Base class for all data loaders
     """
+
     def __init__(self, dataset, batch_size, shuffle, validation_split, num_workers, collate_fn=default_collate):
         self.validation_split = validation_split
         self.shuffle = shuffle
-        
+
         self.batch_idx = 0
         self.n_samples = len(dataset)
 
@@ -30,8 +31,8 @@ class BaseDataLoader(DataLoader):
             'shuffle': self.shuffle,
             'collate_fn': collate_fn,
             'num_workers': num_workers
-            }
-        super(BaseDataLoader, self).__init__(sampler=self.sampler, **self.init_kwargs,worker_init_fn=worker_init_fn)
+        }
+        super(BaseDataLoader, self).__init__(sampler=self.sampler, **self.init_kwargs, worker_init_fn=worker_init_fn)
 
     def _split_sampler(self, split):
         if split == 0.0:
@@ -39,26 +40,25 @@ class BaseDataLoader(DataLoader):
 
         idx_full = np.arange(self.n_samples)
 
-        np.random.seed(0) 
+        np.random.seed(0)
         np.random.shuffle(idx_full)
 
         len_valid = int(self.n_samples * split)
 
         valid_idx = idx_full[0:len_valid]
         train_idx = np.delete(idx_full, np.arange(0, len_valid))
-        
+
         train_sampler = SubsetRandomSampler(train_idx)
         valid_sampler = SubsetRandomSampler(valid_idx)
-        
+
         # turn off shuffle option which is mutually exclusive with sampler
         self.shuffle = False
         self.n_samples = len(train_idx)
 
         return train_sampler, valid_sampler
-        
+
     def split_validation(self):
         if self.valid_sampler is None:
             return None
         else:
             return DataLoader(sampler=self.valid_sampler, **self.init_kwargs)
-    

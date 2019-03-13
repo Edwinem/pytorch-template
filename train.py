@@ -14,6 +14,7 @@ from utils import Logger
 def get_instance(module, name, config, *args):
     return getattr(module, config[name]['type'])(*args, **config[name]['args'])
 
+
 def main(config, resume):
     train_logger = Logger()
 
@@ -24,7 +25,7 @@ def main(config, resume):
     # build model architecture
     model = get_instance(module_arch, 'arch', config)
     print(model)
-    
+
     # get loss and metrics
     loss = get_instance(module_loss, 'loss', config)
     metrics = [getattr(module_metric, met) for met in config['metrics']]
@@ -34,7 +35,7 @@ def main(config, resume):
     optimizer = get_instance(torch.optim, 'optimizer', config, trainable_params)
     lr_scheduler = get_instance(torch.optim.lr_scheduler, 'lr_scheduler', config, optimizer)
 
-    trainer = Trainer(model, loss, metrics, optimizer, 
+    trainer = Trainer(model, loss, metrics, optimizer,
                       resume=resume,
                       config=config,
                       data_loader=data_loader,
@@ -44,20 +45,22 @@ def main(config, resume):
 
     trainer.train()
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='PyTorch Template')
     parser.add_argument('-c', '--config', default=None, type=str,
-                           help='config file path (default: None)')
+                        help='config file path (default: None)')
     parser.add_argument('-r', '--resume', default=None, type=str,
-                           help='path to latest checkpoint (default: None)')
+                        help='path to latest checkpoint (default: None)')
     parser.add_argument('-d', '--device', default=None, type=str,
-                           help='indices of GPUs to enable (default: all)')
-    parser.add_argument('-n','--experiment_name',default=None,type=str,help='save the experiment results under the given name')
+                        help='indices of GPUs to enable (default: all)')
+    parser.add_argument('-n', '--experiment_name', default=None, type=str,
+                        help='save the experiment results under the given name')
     args = parser.parse_args()
 
     if args.config:
         # load config file
-        json_file=open(args.config)
+        json_file = open(args.config)
         config = json.load(json_file)
         json_file.close()
         path = os.path.join(config['trainer']['save_dir'], config['name'])
@@ -69,11 +72,11 @@ if __name__ == '__main__':
         raise AssertionError("Configuration file need to be specified. Add '-c config.json', for example.")
 
     if args.config and args.resume:
-        config['finetune']=True
+        config['finetune'] = True
 
     if args.name:
-        config['name']=args.name
-    
+        config['name'] = args.name
+
     if args.device:
         os.environ["CUDA_VISIBLE_DEVICES"] = args.device
 

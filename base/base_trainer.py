@@ -12,6 +12,7 @@ class BaseTrainer:
     """
     Base class for all trainers
     """
+
     def __init__(self, model, loss, metrics, optimizer, resume, config, train_logger=None):
         self.config = config
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -43,7 +44,7 @@ class BaseTrainer:
 
             self.mnt_best = math.inf if self.mnt_mode == 'min' else -math.inf
             self.early_stop = cfg_trainer.get('early_stop', math.inf)
-        
+
         self.start_epoch = 1
 
         # setup directory for checkpoint saving
@@ -61,11 +62,11 @@ class BaseTrainer:
 
         if resume:
             self._resume_checkpoint(resume)
-    
+
     def _prepare_device(self, n_gpu_use):
         """ 
         setup GPU device if available, move model into configured device
-        """ 
+        """
         n_gpu = torch.cuda.device_count()
         if n_gpu_use > 0 and n_gpu == 0:
             self.logger.warning(
@@ -77,12 +78,12 @@ class BaseTrainer:
                     n_gpu_use, n_gpu))
             n_gpu_use = n_gpu
 
-        device=None
+        device = None
 
         # If given utilize the GPUs in the preferred list. Else utilize all of them
-        list_ids=[]
+        list_ids = []
         if (preferred_list and len(preferred_list) != 0):
-            cuda_str='cuda:{}'.format(preferred_list[0])
+            cuda_str = 'cuda:{}'.format(preferred_list[0])
             device = torch.device(cuda_str if n_gpu_use > 0 else 'cpu')
             for gpu_num in preferred_list:
                 if gpu_num < n_gpu:
@@ -103,14 +104,14 @@ class BaseTrainer:
         """
         for epoch in range(self.start_epoch, self.epochs + 1):
             result = self._train_epoch(epoch)
-            
+
             # save logged informations into log dict
             log = {'epoch': epoch}
             for key, value in result.items():
                 if key == 'metrics':
-                    log.update({mtr.__name__ : value[i] for i, mtr in enumerate(self.metrics)})
+                    log.update({mtr.__name__: value[i] for i, mtr in enumerate(self.metrics)})
                 elif key == 'val_metrics':
-                    log.update({'val_' + mtr.__name__ : value[i] for i, mtr in enumerate(self.metrics)})
+                    log.update({'val_' + mtr.__name__: value[i] for i, mtr in enumerate(self.metrics)})
                 else:
                     log[key] = value
 
@@ -129,7 +130,9 @@ class BaseTrainer:
                     improved = (self.mnt_mode == 'min' and log[self.mnt_metric] < self.mnt_best) or \
                                (self.mnt_mode == 'max' and log[self.mnt_metric] > self.mnt_best)
                 except KeyError:
-                    self.logger.warning("Warning: Metric '{}' is not found. Model performance monitoring is disabled.".format(self.mnt_metric))
+                    self.logger.warning(
+                        "Warning: Metric '{}' is not found. Model performance monitoring is disabled.".format(
+                            self.mnt_metric))
                     self.mnt_mode = 'off'
                     improved = False
                     not_improved_count = 0
@@ -142,12 +145,12 @@ class BaseTrainer:
                     not_improved_count += 1
 
                 if not_improved_count > self.early_stop:
-                    self.logger.info("Validation performance didn\'t improve for {} epochs. Training stops.".format(self.early_stop))
+                    self.logger.info(
+                        "Validation performance didn\'t improve for {} epochs. Training stops.".format(self.early_stop))
                     break
 
             if epoch % self.save_period == 0:
                 self._save_checkpoint(epoch, save_best=best)
-            
 
     def _train_epoch(self, epoch):
         """
@@ -196,11 +199,12 @@ class BaseTrainer:
 
         # load architecture params from checkpoint.
         if checkpoint['config']['arch'] != self.config['arch']:
-            self.logger.warning('Warning: Architecture configuration given in config file is different from that of checkpoint. ' + \
-                                'This may yield an exception while state_dict is being loaded.')
+            self.logger.warning(
+                'Warning: Architecture configuration given in config file is different from that of checkpoint. ' + \
+                'This may yield an exception while state_dict is being loaded.')
         self.model.load_state_dict(checkpoint['state_dict'])
 
-        if self.config['finetune']==True:
+        if self.config['finetune'] == True:
             return
 
         # load optimizer state from checkpoint only when optimizer type is not changed. 
@@ -209,6 +213,6 @@ class BaseTrainer:
                                 'Optimizer parameters not being resumed.')
         else:
             self.optimizer.load_state_dict(checkpoint['optimizer'])
-    
+
         self.train_logger = checkpoint['logger']
         self.logger.info("Checkpoint '{}' (epoch {}) loaded".format(resume_path, self.start_epoch))
