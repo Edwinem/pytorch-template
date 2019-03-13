@@ -48,7 +48,7 @@ class BaseTrainer:
         self.start_epoch = 1
 
         # setup directory for checkpoint saving
-        start_time = datetime.datetime.now().strftime('%m%d_%H%M%S')
+        start_time = datetime.datetime.now().strftime('%m-%d_%H-%M-%S')
         self.checkpoint_dir = os.path.join(cfg_trainer['save_dir'], config['name'], start_time)
         # setup visualization writer instance
         writer_dir = os.path.join(cfg_trainer['log_dir'], config['name'], start_time)

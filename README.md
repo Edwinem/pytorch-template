@@ -160,6 +160,12 @@ You can resume from a previously saved checkpoint by:
   python train.py --resume path/to/checkpoint
   ```
 
+### Resuming with previous model but new config
+
+  ```
+  python train.py --resume path/to/checkpoint --config config.json
+  ```
+
 ### Using Multiple GPU
 You can enable multi-GPU training by setting `n_gpu` argument of the config file to larger number.
 If configured to use smaller number of gpu than available, first n devices will be used by default.
@@ -270,7 +276,7 @@ You can specify the name of the training session in config files:
   "name": "MNIST_LeNet",
   ```
 
-The checkpoints will be saved in `save_dir/name/timestamp/checkpoint_epoch_n`, with timestamp in mmdd_HHMMSS format.
+The checkpoints will be saved in `save_dir/name/timestamp/checkpoint_epoch_n`, with timestamp in mm-dd_HH-MM-SS format.
 
 A copy of config file will be saved in the same folder.
 
