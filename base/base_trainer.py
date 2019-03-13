@@ -68,13 +68,33 @@ class BaseTrainer:
         """ 
         n_gpu = torch.cuda.device_count()
         if n_gpu_use > 0 and n_gpu == 0:
-            self.logger.warning("Warning: There\'s no GPU available on this machine, training will be performed on CPU.")
+            self.logger.warning(
+                "Warning: There\'s no GPU available on this machine, training will be performed on CPU.")
             n_gpu_use = 0
         if n_gpu_use > n_gpu:
-            self.logger.warning("Warning: The number of GPU\'s configured to use is {}, but only {} are available on this machine.".format(n_gpu_use, n_gpu))
+            self.logger.warning(
+                "Warning: The number of GPU\'s configured to use is {}, but only {} are available on this machine.".format(
+                    n_gpu_use, n_gpu))
             n_gpu_use = n_gpu
-        device = torch.device('cuda:0' if n_gpu_use > 0 else 'cpu')
-        list_ids = list(range(n_gpu_use))
+
+        device=None
+
+        # If given utilize the GPUs in the preferred list. Else utilize all of them
+        list_ids=[]
+        if (preferred_list and len(preferred_list) != 0):
+            cuda_str='cuda:{}'.format(preferred_list[0])
+            device = torch.device(cuda_str if n_gpu_use > 0 else 'cpu')
+            for gpu_num in preferred_list:
+                if gpu_num < n_gpu:
+                    list_ids.append(gpu_num)
+                else:
+                    self.logger.warning("Warning: This GPU with the number {} does not exist.".format(
+                        gpu_num))
+
+        else:
+            list_ids = list(range(n_gpu_use))
+            device = torch.device('cuda:0' if n_gpu_use > 0 else 'cpu')
+
         return device, list_ids
 
     def train(self):
@@ -179,6 +199,9 @@ class BaseTrainer:
             self.logger.warning('Warning: Architecture configuration given in config file is different from that of checkpoint. ' + \
                                 'This may yield an exception while state_dict is being loaded.')
         self.model.load_state_dict(checkpoint['state_dict'])
+
+        if self.config['finetune']==True:
+            return
 
         # load optimizer state from checkpoint only when optimizer type is not changed. 
         if checkpoint['config']['optimizer']['type'] != self.config['optimizer']['type']:

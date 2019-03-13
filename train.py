@@ -6,6 +6,7 @@ import data_loader.data_loaders as module_data
 import model.loss as module_loss
 import model.metric as module_metric
 import model.model as module_arch
+import base.lr_schedulers as lr_schedulers
 from trainer import Trainer
 from utils import Logger
 
@@ -24,8 +25,8 @@ def main(config, resume):
     model = get_instance(module_arch, 'arch', config)
     print(model)
     
-    # get function handles of loss and metrics
-    loss = getattr(module_loss, config['loss'])
+    # get loss and metrics
+    loss = get_instance(module_loss, 'loss', config)
     metrics = [getattr(module_metric, met) for met in config['metrics']]
 
     # build optimizer, learning rate scheduler. delete every lines containing lr_scheduler for disabling scheduler
@@ -51,12 +52,13 @@ if __name__ == '__main__':
                            help='path to latest checkpoint (default: None)')
     parser.add_argument('-d', '--device', default=None, type=str,
                            help='indices of GPUs to enable (default: all)')
+    parser.add_argument('-n','--experiment_name',default=None,type=str,help='save the experiment results under the given name')
     args = parser.parse_args()
 
     if args.config:
         # load config file
         json_file=open(args.config)
-        config = json.load()
+        config = json.load(json_file)
         json_file.close()
         path = os.path.join(config['trainer']['save_dir'], config['name'])
     elif args.resume:
@@ -65,6 +67,12 @@ if __name__ == '__main__':
         config = torch.load(args.resume)['config']
     else:
         raise AssertionError("Configuration file need to be specified. Add '-c config.json', for example.")
+
+    if args.config and args.resume:
+        config['finetune']=True
+
+    if args.name:
+        config['name']=args.name
     
     if args.device:
         os.environ["CUDA_VISIBLE_DEVICES"] = args.device
