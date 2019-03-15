@@ -325,6 +325,7 @@ Code should pass the [Flake8](http://flake8.pycqa.org/en/latest/) check before c
 - [ ] Multiple optimizers
 - [ ] Configurable logging layout, checkpoint naming
 - [ ] `visdom` logger support
+- [ ] Add ability to have multiple individual model files
 - [x] `tensorboardX` logger support
 - [x] Adding command line option for fine-tuning
 - [x] Multi-GPU support
@@ -333,8 +334,12 @@ Code should pass the [Flake8](http://flake8.pycqa.org/en/latest/) check before c
 - [x] Deprecate `BaseDataLoader`, use `torch.utils.data` instesad
 - [x] Load settings from `config` files
 
+
+## Comments about dislikes
+
+* Don't like having everything in one file(one model file, one dataloader file)
+* Training flexibility is currently non existent. E.g Somehow start with L2 norm and transition to L1.
+
+
 ## License
 This project is licensed under the MIT License. See  LICENSE for more details
-
-## Acknowledgments
-This project is inspired by the project [Tensorflow-Project-Template](https://github.com/MrGemy95/Tensorflow-Project-Template) by [Mahmoud Gemy](https://github.com/MrGemy95)
