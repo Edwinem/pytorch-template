@@ -339,7 +339,7 @@ Code should pass the [Flake8](http://flake8.pycqa.org/en/latest/) check before c
 
 * Don't like having everything in one file(one model file, one dataloader file)
 * Training flexibility is currently non existent. E.g Somehow start with L2 norm and transition to L1.
-
+* Why does every dataset need its own dataloader. In theory they can all go 
 
 ## License
 This project is licensed under the MIT License. See  LICENSE for more details
