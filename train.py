@@ -9,6 +9,7 @@ import model.model as module_arch
 import base.lr_schedulers as lr_schedulers
 from trainer import Trainer
 from utils import Logger
+from utils import util
 
 
 def get_instance(module, name, config, *args):
@@ -61,6 +62,8 @@ if __name__ == '__main__':
     if args.config:
         # load config file
         json_file = open(args.config)
+        #Remove comments from Json file
+        json_file=util.json_remove_comments(json_file)
         config = json.load(json_file)
         json_file.close()
         path = os.path.join(config['trainer']['save_dir'], config['name'])

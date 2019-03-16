@@ -88,7 +88,7 @@ The code in this repo is an MNIST example of the template.
 Try `python3 train.py -c config.json` to run code.
 
 ### Config file format
-Config files are in `.json` format:
+Config files are in `.json` format. Comments are allowed, they are removed before processing.
 ```javascript
 {
   "name": "Mnist_LeNet",        // training session name
@@ -171,7 +171,7 @@ You can enable multi-GPU training by setting `n_gpu` argument of the config file
 If configured to use smaller number of gpu than available, first n devices will be used by default.
 Specify indices of available GPUs by cuda environmental variable.
   ```
-  python train.py --device 2,3 -c config.json
+  python train.py --device 2,3 -c configs/config.json
   ```
   This is equivalent to
   ```
