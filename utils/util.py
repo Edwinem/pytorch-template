@@ -18,9 +18,12 @@ def json_remove_comments(json_file):
         from json_minify import json_minify
         return json_minify(json_file)
     except ImportError:
-        json=remove_comments(json_file)
-        json=remove_trailing_commas(json)
-        return json
+        json_out=''
+        for line in json_file:  # Read it all in
+            json_out += line
+        almost_json=remove_comments(json_out)
+        proper_json=remove_trailing_commas(almost_json)
+        return proper_json
 
 
 
@@ -63,7 +66,9 @@ def remove_trailing_commas(json_like):
     trailing_array_commas_re = re.compile(
         r'(,)\s*\](?=([^"\\]*(\\.|"([^"\\]*\\.)*[^"\\]*"))*[^"]*$)')
     # Fix objects {} first
-    objects_fixed=trailing_object_commas_re.sub("}", json_like.decode('utf-8'))
+
+    #this can fail on UNICODE. Dont know if I care
+    objects_fixed=trailing_object_commas_re.sub("}", json_like)
     # Now fix arrays/lists [] and return the result
     return trailing_array_commas_re.sub("]", objects_fixed)
 
