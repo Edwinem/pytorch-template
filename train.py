@@ -7,7 +7,7 @@ import model.loss as module_loss
 import model.metric as module_metric
 import model.model as module_arch
 import base.lr_schedulers as lr_schedulers
-from trainer import Trainer
+import trainer as module_trainer
 from utils import Logger
 from utils import util
 
@@ -40,6 +40,26 @@ def search_module_and_get_instance(module, name, config):
           'and you spelled it correctly'.format(config[name]['type'], module))
     exit(1)
 
+
+def search_module_and_get_attr(module,name,config,**kwargs):
+    '''
+    Searches through the module _all_ variable and tries to find the specified class. Same as
+    search_module_and_get_instance expect it returns an attr instead
+
+    :param module:
+    :param name:
+    :param config:
+    :return:
+    '''
+    for m in module.__all__:
+        mod=getattr(module,str(m))
+        if hasattr(mod,config[name]['type']):
+            print('LOADING \"{}\" of type \"{}\" from \"{}\" '.format(name,config[name]['type'],mod))
+            return getattr(mod,config[name]['type'])
+    print('ERROR: Could not find {} in any of the modules under {}. Please make sure that the class exists '
+          'and you spelled it correctly'.format(config[name]['type'],module))
+    exit(1)
+
 def main(config, resume):
     train_logger = Logger()
 
@@ -60,6 +80,7 @@ def main(config, resume):
     optimizer = get_instance(torch.optim, 'optimizer', config, trainable_params)
     lr_scheduler = get_instance(torch.optim.lr_scheduler, 'lr_scheduler', config, optimizer)
 
+    Trainer=search_module_and_get_attr(module_trainer,'trainer',config)
     trainer = Trainer(model, loss, metrics, optimizer,
                       resume=resume,
                       config=config,
