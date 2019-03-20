@@ -88,7 +88,7 @@ The code in this repo is an MNIST example of the template.
 Try `python3 train.py -c config.json` to run code.
 
 ### Config file format
-Config files are in `.json` format:
+Config files are in `.json` format. Comments are allowed, they are removed before processing.
 ```javascript
 {
   "name": "Mnist_LeNet",        // training session name
@@ -171,7 +171,7 @@ You can enable multi-GPU training by setting `n_gpu` argument of the config file
 If configured to use smaller number of gpu than available, first n devices will be used by default.
 Specify indices of available GPUs by cuda environmental variable.
   ```
-  python train.py --device 2,3 -c config.json
+  python train.py --device 2,3 -c configs/config.json
   ```
   This is equivalent to
   ```
@@ -339,7 +339,7 @@ Code should pass the [Flake8](http://flake8.pycqa.org/en/latest/) check before c
 
 * Don't like having everything in one file(one model file, one dataloader file)
 * Training flexibility is currently non existent. E.g Somehow start with L2 norm and transition to L1.
-
+* Why does every dataset need its own dataloader. In theory they can all go 
 
 ## License
 This project is licensed under the MIT License. See  LICENSE for more details
