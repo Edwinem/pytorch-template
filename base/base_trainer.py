@@ -144,7 +144,7 @@ class BaseTrainer:
                 else:
                     not_improved_count += 1
 
-                if not_improved_count > self.early_stop:
+                if not_improved_count > self.early_stop and self.early_stop!=0:
                     self.logger.info(
                         "Validation performance didn\'t improve for {} epochs. Training stops.".format(self.early_stop))
                     break
@@ -169,6 +169,15 @@ class BaseTrainer:
         :param save_best: if True, rename the saved checkpoint to 'model_best.pth'
         """
         arch = type(self.model).__name__
+
+        # assure that we save the model state without DataParallel module
+        if isinstance(self.model, torch.nn.DataParallel):
+            # get the original state out from DataParallel module
+            model_state = self.model.module.state_dict()
+        else:
+
+            model_state = self.model.state_dict()
+
         state = {
             'arch': arch,
             'epoch': epoch,

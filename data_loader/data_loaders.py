@@ -8,12 +8,12 @@ class SampleDataLoader(BaseDataLoader):
     def __init__(
         self, batch_size,
         shuffle, validation_split,
-        num_workers, dataset_args={}
+        num_workers,pin_memory=False, dataset_args={}
     ):
         self.dataset = SampleDataSet(**dataset_args)
         super(SampleDataLoader, self).__init__(
             self.dataset, batch_size, shuffle,
-            validation_split, num_workers)
+            validation_split, num_workers,pin_memory)
 
 
 class SampleDataSet(Dataset):
