@@ -85,7 +85,7 @@ PyTorch deep learning project made easy.
 
 ## Usage
 The code in this repo is an MNIST example of the template.
-Try `python3 train.py -c config.json` to run code.
+Try `python3 train.py -c configs/config.json` to run code.
 
 ### Config file format
 Config files are in `.json` format. Comments are allowed, they are removed before processing.
@@ -108,6 +108,10 @@ Config files are in `.json` format. Comments are allowed, they are removed befor
       "shuffle": true,                 // shuffle training data before splitting
       "validation_split": 0.1          // validation data ratio
       "num_workers": 2,                // number of cpu processes to be used for data loading
+      "pin_memory":true,
+      "dataset_args":{      //arguments for your custom Torch.dataset e.g data directory,cache values
+        
+      }    
     }
   },
   "optimizer": {
@@ -139,7 +143,8 @@ Config files are in `.json` format. Comments are allowed, they are removed befor
     "early_stop": 10	                 // number of epochs to wait before early stop. set 0 to disable.
   
     "tensorboardX": true,              // enable tensorboardX visualization support
-    "log_dir": "saved/runs"            // directory to save log files for visualization
+    "log_dir": "saved/runs",            // directory to save log files for visualization
+    "log_step": 100  //number of batch iterations before it logs to logger(Tensorboard/vidom
   }
 }
 ```
@@ -283,7 +288,7 @@ A copy of config file will be saved in the same folder.
 **Note**: checkpoints contain:
   ```python
   {
-    'arch': arch,
+    'model': arch,
     'epoch': epoch,
     'logger': self.train_logger,
     'state_dict': self.model.state_dict(),

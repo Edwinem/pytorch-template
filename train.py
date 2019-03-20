@@ -102,6 +102,8 @@ if __name__ == '__main__':
                         help='indices of GPUs to enable (default: all)')
     parser.add_argument('-n', '--experiment_name', default=None, type=str,
                         help='save the experiment results under the given name')
+    parser.add_argument('-p', '--profile', dest='profile',action='store_true',default=False,
+                           help='Profile the train function')
     args = parser.parse_args()
 
     if args.config:
@@ -127,5 +129,8 @@ if __name__ == '__main__':
 
     if args.device:
         os.environ["CUDA_VISIBLE_DEVICES"] = args.device
+
+    if args.profile:
+        config['profile_epoch'] = True
 
     main(config, args.resume)

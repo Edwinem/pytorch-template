@@ -1,7 +1,7 @@
 {
     "name": "Mnist_LeNet",
-    "n_gpu": 1,
-    
+    "n_gpu": 1,  //how many gpus do you want to use
+      "gpu_list":[1],  // list of which GPUs to use.
     "model": {
         "type": "MnistModel",
         "args": {}
@@ -49,6 +49,7 @@
         "early_stop": 10,
         
         "tensorboardX": true,
-        "log_dir": "saved/runs"
+        "log_dir": "saved/runs",
+        "log_step": 100
     }
 }
