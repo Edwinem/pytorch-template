@@ -53,12 +53,14 @@ PyTorch deep learning project made easy.
   │
   ├── train.py - main script to start training
   ├── test.py - evaluation of trained model
-  ├── config.json - config file
   │
   ├── base/ - abstract base classes
   │   ├── base_data_loader.py - abstract base class for data loaders
   │   ├── base_model.py - abstract base class for models
   │   └── base_trainer.py - abstract base class for trainers
+  │
+  ├── configs/ - configuration files
+  │   ├── config.json - config file
   │
   ├── data_loader/ - anything about data loading goes here
   │   └── data_loaders.py
@@ -330,7 +332,7 @@ Code should pass the [Flake8](http://flake8.pycqa.org/en/latest/) check before c
 - [ ] Multiple optimizers
 - [ ] Configurable logging layout, checkpoint naming
 - [ ] `visdom` logger support
-- [ ] Add ability to have multiple individual model files
+- [x] Add ability to have multiple individual model files
 - [x] `tensorboardX` logger support
 - [x] Adding command line option for fine-tuning
 - [x] Multi-GPU support
@@ -342,7 +344,6 @@ Code should pass the [Flake8](http://flake8.pycqa.org/en/latest/) check before c
 
 ## Comments about dislikes
 
-* Don't like having everything in one file(one model file, one dataloader file)
 * Training flexibility is currently non existent. E.g Somehow start with L2 norm and transition to L1.
 * Why does every dataset need its own dataloader. In theory they can all go 
 
